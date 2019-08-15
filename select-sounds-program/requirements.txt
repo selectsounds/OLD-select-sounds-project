@@ -3,3 +3,5 @@ mongoengine
 tqdm
 colorama
 python-dateutil
+bs4
+dnspython
