@@ -55,7 +55,7 @@ def add_record():
         error_msg('Cancelled')
         return
     if not record_page_url.startswith('https://www.discogs.com/'):
-        error_msg('Invalid discogs.com address entered')
+        error_msg('\nInvalid discogs.com address entered')
         return
 
     record_data = wsvc.extract_record_web_page_data(record_page_url)

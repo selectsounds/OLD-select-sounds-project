@@ -401,7 +401,9 @@ class RecordInfoPage(RecordWebPage):
         format_types = ['Single', 'EP', 'Album', 'LP']
         speed_types = ['33RPM', '33⅓RPM', '78RPM', '45RPM']
         size_types = ['7"', '10"', '12"']
-        rec_format_data = {}
+        rec_format_data = {'format': 'N/A',
+                           'speed': 'N/A',
+                           'size': 'N/A'}
 
         for i in rec_format_list:
             if i in format_types:
@@ -518,6 +520,6 @@ if __name__ == '__main__':
 
     test_record_info_page = RecordInfoPage(page_url='https://www.discogs.com/Carl-Douglas-Run-Back/release/1727101')
     # print(test_record_info_page.page_url)
-    print(test_record_info_page.record_data)
+    # print(test_record_info_page.record_data)
     #
     # input('Hello: ')
