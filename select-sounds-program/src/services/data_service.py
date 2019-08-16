@@ -159,6 +159,7 @@ def add_record(record_data: Dict, cost: float = None) -> Record:
     record.label = record_data['label']
     record.country = record_data['country']
     record.release_date = record_data['release-date']
+    record.genre = record_data['genre']
     record.format = record_data['format']
     record.size = record_data['size']
     record.speed = record_data['speed']
@@ -173,3 +174,8 @@ def add_record(record_data: Dict, cost: float = None) -> Record:
     record.save()
 
     return record
+
+
+def check_existing_records(name: str, artist: str) -> List[Record]:
+    query = Record.objects(name=name, artist=artist)
+    return query

@@ -1,3 +1,4 @@
+import re
 from typing import Dict
 
 import bs4
@@ -381,7 +382,18 @@ class RecordInfoPage(RecordWebPage):
     def extract_record_title(self) -> Dict:
         # insert doctype here
 
-        url_title_span = self.page_soup.find("h1", {"id": "profile_title"}).findAll("span")
+        url_title_span = self.page_soup.find("h1", {"id": "profile_title"}).findAll('span')
+
+        # TODO: Add functionality for records with multiple artists (e.g. https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759)
+
+        # url_title = self.page_soup.find("h1", {"id": "profile_title"})
+        #
+        # url_title_artist = url_title.findAll("span", {'title': re.compile('.*')})
+        # record_artist = ''
+        # for a in url_title_artist:
+        #     record_artist += a.text.strip()
+
+        # for s in url_title_span_list:
 
         split_url_title_span_list = [url_title_span[i] for i in range(1, len(url_title_span))]
 
@@ -397,6 +409,8 @@ class RecordInfoPage(RecordWebPage):
         # speed (in RPM - 33, 45 or 78 - optional) & type (Album, LP / Single / EP)
         rec_format_list = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
             1].text.replace(" ", "").replace("\n", "").split(",")
+
+        # TODO: Add functionality for records with extra formatting (e.g. https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759)
 
         format_types = ['Single', 'EP', 'Album', 'LP']
         speed_types = ['33RPM', '33⅓RPM', '78RPM', '45RPM']
@@ -427,16 +441,29 @@ class RecordInfoPage(RecordWebPage):
             3].text.strip().replace("\n", "")
 
     def extract_record_genre(self):
-        return self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
+        genre = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
             4].text.strip().replace("\n", "")
+
+        style = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
+            5].text.strip().replace("\n", "")
+
+        if style:
+            genre += f', {style}'
+
+        return genre
 
     def extract_record_price_data(self):
         price_data = self.page_soup.find("div", {"id": "statistics"}).find("div", {
             "class": "section_content toggle_section_content"}).find("ul", {"class": "last"}).findAll("li")[1:]
 
-        lowest_price = float(price_data[0].text.split("\n")[2].strip().replace('£', ''))
-        median_price = float(price_data[1].text.split('\n')[2].strip().replace('£', ''))
-        highest_price = float(price_data[2].text.split('\n')[2].strip().replace('£', ''))
+        lowest_price = price_data[0].text.split("\n")[2].strip().replace('£', '')
+        lowest_price = float(lowest_price) if lowest_price != '--' else 0.0
+
+        median_price = price_data[1].text.split('\n')[2].strip().replace('£', '')
+        median_price = float(median_price) if median_price != '--' else 0.0
+
+        highest_price = price_data[2].text.split('\n')[2].strip().replace('£', '')
+        highest_price = float(highest_price) if highest_price != '--' else 0.0
 
         return {
             'lowest-price': lowest_price,
@@ -450,7 +477,8 @@ class RecordInfoPage(RecordWebPage):
         playlist = []
 
         for tr in rec_playlist:
-            playlist.append(tr.find("td", {"class": "track tracklist_track_title"}).span.text)
+            if tr.find("td", {"class": re.compile(r"track tracklist_track_title.*")}):
+                playlist.append(tr.find("td", {"class": re.compile(r"track tracklist_track_title.*")}).span.text)
 
         return playlist
 
@@ -469,6 +497,7 @@ class RecordInfoPage(RecordWebPage):
         rec_country = self.extract_record_country()
         rec_release_date = self.extract_record_release_date()
         rec_genre = self.extract_record_genre()
+        # rec_style = self.extract_record_style
 
         record_data = self.extract_record_title()
         record_data.update(
@@ -518,8 +547,13 @@ if __name__ == '__main__':
 
     # print("\n" + test_search_record.generate_search_result_string())
 
-    test_record_info_page = RecordInfoPage(page_url='https://www.discogs.com/Carl-Douglas-Run-Back/release/1727101')
+    test_record_info_page = RecordInfoPage(
+        page_url='https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759')
+    page_soup = test_record_info_page.page_soup
+
     # print(test_record_info_page.page_url)
     # print(test_record_info_page.record_data)
     #
     # input('Hello: ')
+
+    # TODO: Implement automated tests to make sure all data is working properly

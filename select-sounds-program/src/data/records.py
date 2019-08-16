@@ -10,6 +10,8 @@ class Record(mongoengine.Document):
     label = mongoengine.StringField(required=True)
     country = mongoengine.StringField(required=True)
     release_date = mongoengine.StringField(required=True)
+    genre = mongoengine.StringField(required=True)
+    style = mongoengine.StringField()
     format = mongoengine.StringField()  # single / LP / EP / Album
     size = mongoengine.StringField()
     speed = mongoengine.StringField()

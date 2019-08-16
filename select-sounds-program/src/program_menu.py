@@ -94,6 +94,32 @@ def add_record():
     if not record_cost:
         record_cost = None
 
+    existing_records = dsvc.check_existing_records(record_data['name'], record_data['artist'])
+    if existing_records:
+        print(f'There are {len(existing_records)} records with matching name + artist in database')
+        list_existing_records = input('List existing record data (y/n)? ').startswith('y')
+        if list_existing_records:
+            for idx, r in enumerate(existing_records):
+                print(f' Record {idx + 1}:\n'
+                      f' * name          : {r.name}\n'
+                      f' * artist        : {r.artist}\n'
+                      f' * label         : {r.label}\n'
+                      f' * country       : {r.country}\n'
+                      f' * release-date  : {r.release_date}\n'
+                      f' * genre         : {r.genre}\n'
+                      f' * format        : {r.format}\n'
+                      f' * size          : {r.size}\n'
+                      f' * speed         : {r.speed}\n'
+                      f' * tracklist     : {r.tracklist}\n'
+                      f' * lowest-price  : {r.lowest_price}\n'
+                      f' * median-price  : {r.median_price}\n'
+                      f' * highest-price : {r.highest_price}\n')
+
+        continue_or_cancel = input('Continue anyway (y/n)? ').startswith('y')
+        if not continue_or_cancel:
+            error_msg('Cancelled')
+            return
+
     record = dsvc.add_record(record_data, cost=record_cost)
 
     success_msg(f'Record: "{record.name}" by {record.artist} added to database with id {record.id}')
