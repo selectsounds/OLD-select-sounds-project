@@ -453,17 +453,26 @@ class RecordInfoPage(RecordWebPage):
         return genre
 
     def extract_record_price_data(self):
-        price_data = self.page_soup.find("div", {"id": "statistics"}).find("div", {
-            "class": "section_content toggle_section_content"}).find("ul", {"class": "last"}).findAll("li")[1:]
+        price_section = self.page_soup.find('div', {'id': 'statistics'})
+        if not price_section:
+            lowest_price = 0
+            median_price = 0
+            highest_price = 0
 
-        lowest_price = price_data[0].text.split("\n")[2].strip().replace('£', '')
-        lowest_price = float(lowest_price) if lowest_price != '--' else 0.0
+        else:
+            price_data = price_section.find("div", {
+                "class": "section_content toggle_section_content"}).find("ul", {"class": "last"}).findAll("li")[1:]
 
-        median_price = price_data[1].text.split('\n')[2].strip().replace('£', '')
-        median_price = float(median_price) if median_price != '--' else 0.0
+            # TODO: Check if price section exists and handle in code
 
-        highest_price = price_data[2].text.split('\n')[2].strip().replace('£', '')
-        highest_price = float(highest_price) if highest_price != '--' else 0.0
+            lowest_price = price_data[0].text.split("\n")[2].strip().replace('£', '')
+            lowest_price = float(lowest_price) if lowest_price != '--' else 0.0
+
+            median_price = price_data[1].text.split('\n')[2].strip().replace('£', '')
+            median_price = float(median_price) if median_price != '--' else 0.0
+
+            highest_price = price_data[2].text.split('\n')[2].strip().replace('£', '')
+            highest_price = float(highest_price) if highest_price != '--' else 0.0
 
         return {
             'lowest-price': lowest_price,
@@ -548,7 +557,7 @@ if __name__ == '__main__':
     # print("\n" + test_search_record.generate_search_result_string())
 
     test_record_info_page = RecordInfoPage(
-        page_url='https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759')
+        page_url='https://www.discogs.com/Various-Gutta-Butta-Volume-2/release/6548241')
     page_soup = test_record_info_page.page_soup
 
     # print(test_record_info_page.page_url)
