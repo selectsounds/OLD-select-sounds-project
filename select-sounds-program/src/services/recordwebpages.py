@@ -382,9 +382,15 @@ class RecordInfoPage(RecordWebPage):
     def extract_record_title(self) -> Dict:
         # insert doctype here
 
-        url_title_span = self.page_soup.find("h1", {"id": "profile_title"}).findAll('span')
+        rec_artists = self.page_soup.find("h1", {"id": "profile_title"}).findAll('span', {'title': re.compile(r'.*')})
+        artists = ''
+        for a in rec_artists:
+            artists += a.text.replace('\n', '')
 
-        # TODO: Add functionality for records with multiple artists (e.g. https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759)
+        name = self.page_soup.find('h1', {"id": "profile_title"}).find_all('span', attrs={"title": None})[
+            -1].text.strip()
+
+        url_title_span = self.page_soup.find("h1", {"id": "profile_title"}).findAll('span')
 
         # url_title = self.page_soup.find("h1", {"id": "profile_title"})
         #
@@ -395,31 +401,36 @@ class RecordInfoPage(RecordWebPage):
 
         # for s in url_title_span_list:
 
-        split_url_title_span_list = [url_title_span[i] for i in range(1, len(url_title_span))]
+        # split_url_title_span_list = [url_title_span[i] for i in range(1, len(url_title_span))]
 
-        record_artist = split_url_title_span_list[0].text.strip().replace("\n", "")
-        record_name = split_url_title_span_list[1].text.strip().replace("\n", "")
-        return {'name': record_name, 'artist': record_artist}
+        # record_artist = split_url_title_span_list[0].text.strip().replace("\n", "")
+        # record_name = split_url_title_span_list[1].text.strip().replace("\n", "")
+        return {'name': name, 'artist': artists}
 
     def extract_record_label(self):
-        return self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[0].a.text
+        label = 'N/A'
+        for c in self.extract_record_content():
+            if c.find('a', {'href': re.compile(r'\/label\/')}):
+                label = c.a.text.strip().replace('\t', '')
+
+        return label
+
+        # return self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[0].a.text
 
     def extract_record_format_data(self):
         # find second line in record title, containing record form (i.e. Vinyl), size (7" or 12" - optional),
         # speed (in RPM - 33, 45 or 78 - optional) & type (Album, LP / Single / EP)
-        rec_format_list = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
-            1].text.replace(" ", "").replace("\n", "").split(",")
-
-        # TODO: Add functionality for records with extra formatting (e.g. https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759)
+        format_content = ''
+        for c in self.extract_record_content():
+            if c.find('a', {'href': '/search/?format_exact=Vinyl'}):
+                format_content = c.text.strip().replace(' ', '').split(',')
 
         format_types = ['Single', 'EP', 'Album', 'LP']
         speed_types = ['33RPM', '33⅓RPM', '78RPM', '45RPM']
         size_types = ['7"', '10"', '12"']
-        rec_format_data = {'format': 'N/A',
-                           'speed': 'N/A',
-                           'size': 'N/A'}
+        rec_format_data = {'format': 'N/A', 'speed': 'N/A', 'size': 'N/A'}
 
-        for i in rec_format_list:
+        for i in format_content:
             if i in format_types:
                 rec_format_data['format'] = i
 
@@ -432,25 +443,40 @@ class RecordInfoPage(RecordWebPage):
         return rec_format_data
 
     def extract_record_country(self):
-        rec_country = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
-            2].text.strip().replace("\n", "")
-        return rec_country
+        country = 'N/A'
+        for c in self.extract_record_content():
+            if c.find('a', {'href': re.compile(r'.*country.*')}):
+                country = c.text.strip().replace('\t', '')
+                break
+
+        return country
 
     def extract_record_release_date(self):
-        return self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
-            3].text.strip().replace("\n", "")
+        release_date = 'N/A'
+        for c in self.extract_record_content():
+            if c.find('a', {'href': re.compile(r'.*(decade|year|month|day).*')}):
+                release_date = c.text.strip().replace('\t', '')
+                break
+
+        return release_date
 
     def extract_record_genre(self):
-        genre = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
-            4].text.strip().replace("\n", "")
-
-        style = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})[
-            5].text.strip().replace("\n", "")
+        genre = ''
+        style = ''
+        for c in self.extract_record_content():
+            if c.find('a', {'href': re.compile(r'.*genre.*')}):
+                genre = c.text.strip().replace('\t', '')
+            elif c.find('a', {'href': re.compile(r'.*style.*')}):
+                style = c.text.strip().replace('\t', '')
 
         if style:
             genre += f', {style}'
 
         return genre
+
+    def extract_record_content(self):
+        record_content = self.page_soup.find("div", {"class": "profile"}).findAll("div", {"class": "content"})
+        return record_content
 
     def extract_record_price_data(self):
         price_section = self.page_soup.find('div', {'id': 'statistics'})
@@ -538,26 +564,10 @@ class RecordInfoPage(RecordWebPage):
 
 
 if __name__ == '__main__':
-    # test_record_page = RecordWebPage(url_body='Carl-Douglas-Run-Back/release/1727101')
-    # print(test_record_page.page_url)
-    # test_record_page.url_body = 'Gene-Chandler-Get-Down/release/1258602'
-    # print(test_record_page.page_url)
-    #
-    # test_search_record_page = SearchRecordWebPage(search_str='run back carl douglas')
-    # test_search_record_page = SearchRecordWebPage(search_str='Girl I Betcha David Joseph')
-    # print(test_search_record_page.page_url)
-    # print(test_search_record_page.generate_search_result_string(number_to_extract=5))
-
-    # found_search_result = test_search_record_page.select_record(2)
-
-    # test_search_record_page.search_str = 'gene chandler run back'
-    # print(test_search_record_page.page_url)
-    # print(test_search_record_page.search_result_data[0])
-
-    # print("\n" + test_search_record.generate_search_result_string())
-
+    # testing
+    
     test_record_info_page = RecordInfoPage(
-        page_url='https://www.discogs.com/Various-Gutta-Butta-Volume-2/release/6548241')
+        page_url='https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759')
     page_soup = test_record_info_page.page_soup
 
     # print(test_record_info_page.page_url)
