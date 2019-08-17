@@ -1,12 +1,9 @@
-import datetime
-
 from colorama import Fore
 
 from infrastructure.switchlang import switch
 import infrastructure.state as state
 import services.data_service as dsvc
 import services.web_services as wsvc
-from services.recordwebpages import RecordInfoPage
 
 
 def run():
@@ -172,126 +169,6 @@ def delete_record():
     print(' ****************** NOT IMPLEMENTED ****************** ')
 
 
-# def log_into_account():
-#     print(' ****************** LOGIN **************** ')
-#
-#     email = input('Email: ').strip().lower()
-#     found_account = svc.find_account_by_email(email)
-#
-#     if not found_account:
-#         error_msg(f"No account found with email '{email}'")
-#         return
-#
-#     state.active_account = found_account
-#     success_msg(f"Successfully logged into account. Welcome {state.active_account.name}!")
-#
-#
-# def register_cage():
-#     print(' ****************** REGISTER CAGE **************** ')
-#
-#     if not state.active_account:
-#         error_msg("Must be logged in to register a cage")
-#         return
-#
-#     metres = input('How many square metres is the cage? ')
-#     if not metres:
-#         error_msg('Cancelled - no input given')
-#         return
-#
-#     metres = float(metres)
-#     carpeted = input('Is it carpeted (y/n)? ').lower().startswith('y')
-#     has_toys = input('Does it have toys (y/n)? ').lower().startswith('y')
-#     dangerous_snakes_allowed = input('Dangerous snakes allowed (y/n)? ').lower().startswith('y')
-#     name = input('Name of cage: ')
-#     price = float(input('Cage price: '))
-#
-#     cage = svc.register_cage(
-#         state.active_account, name, price, metres, carpeted, has_toys, dangerous_snakes_allowed
-#     )
-#
-#     state.reload_account()
-#     success_msg(f"New Cage {name} successfully registered with id '{cage.id}")
-#
-#
-# def list_cages(suppress_header=False):
-#     if not suppress_header:
-#         print(' ******************     Your cages     **************** ')
-#
-#     if not state.active_account:
-#         error_msg("Must be logged in to register a cage")
-#         return
-#
-#     cages = svc.find_cages_for_user(state.active_account)
-#     print(f"You have '{len(cages)}' cages")
-#     for idx, c in enumerate(cages):
-#         print(f" * {idx + 1}. {c.name} is {c.square_metres}m\N{SUPERSCRIPT TWO}")
-#         for b in c.bookings:
-#             print('\t  *  Booking: {}, {} days, booked: {}'.format(
-#                 b.check_in_date, (b.check_out_date - b.check_in_date).days,
-#                 "yes" if b.booked_date else "no"))
-#
-#
-# def update_availability():
-#     print(' ****************** Add available date **************** ')
-#
-#     if not state.active_account:
-#         error_msg("Must be logged in to update availability")
-#         return
-#
-#     list_cages(suppress_header=True)
-#
-#     cage_number = input("Enter cage number: ")
-#     if not cage_number:
-#         error_msg("Cancelled")
-#         return
-#
-#     cage_number = int(cage_number)
-#     cages = svc.find_cages_for_user(state.active_account)
-#     selected_cage = cages[cage_number - 1]
-#
-#     success_msg(f"Selected cage {selected_cage.name}")
-#
-#     start_date = parser.parse(
-#         input("Enter date cage will be available from [yyyy-mm-dd]: ")
-#     )
-#     days = int(input('How many days will the cage be available for? '))
-#
-#     svc.add_available_date(
-#         selected_cage,
-#         start_date,
-#         days
-#     )
-#     state.reload_account()
-#
-#     success_msg(f'Date added to cage {selected_cage.name}')
-#
-#
-# def view_bookings():
-#     print(' ****************** Your bookings **************** ')
-#
-#     if not state.active_account:
-#         error_msg("Must be logged in to register a cage")
-#         return
-#
-#     cages = svc.find_cages_for_user(state.active_account)
-#
-#     bookings = [
-#         (c, b)
-#         for c in cages
-#         for b in c.bookings
-#         if b.booked_date is not None
-#     ]
-#
-#     print("You have {} bookings.".format(len(bookings)))
-#     for c, b in bookings:
-#         print(' * Cage: {}, booked date: {}, from {} for {} days.'.format(
-#             c.name,
-#             datetime.date(b.booked_date.year, b.booked_date.month, b.booked_date.day),
-#             datetime.date(b.check_in_date.year, b.check_in_date.month, b.check_in_date.day),
-#             b.duration_in_days
-#         ))
-
-
 def exit_app():
     print()
     print('bye')
@@ -300,8 +177,8 @@ def exit_app():
 
 def get_action():
     text = '> '
-    if state.active_account:
-        text = f'{state.active_account.name}> '
+    # if state.active_account:
+    #     text = f'{state.active_account.name}> '
 
     action = input(Fore.YELLOW + text + Fore.WHITE)
     return action.strip().lower()

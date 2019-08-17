@@ -1,5 +1,4 @@
 from colorama import Fore
-import program_guests
 import program_menu
 import data.mongo_setup as mongo_setup
 
@@ -12,10 +11,7 @@ def main():
     try:
         while True:
             program_menu.run()
-            # if find_user_intent() == 'book':
-            #     program_guests.run()
-            # else:
-            #     program_hosts.run()
+
     except KeyboardInterrupt:
         return
 
