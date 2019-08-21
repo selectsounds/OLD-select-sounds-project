@@ -5,3 +5,4 @@ colorama
 python-dateutil
 bs4
 dnspython
+python-docx
