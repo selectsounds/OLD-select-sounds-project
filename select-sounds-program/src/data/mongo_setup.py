@@ -1,18 +1,19 @@
 import mongoengine
 import dns
 
-alias_core = 'select-sounds'
-db = 'selectsoundsdb'
+from infrastructure import config
 
+alias_core = config.mongo_alias
+db = config.mongo_db
+username = config.mongo_username
+password = config.mongo_password
 
-# Connection-string: 'mongodb+srv://SelectSounds:beatsbyer@testcluster-9feub.azure.mongodb.net/test?retryWrites=true&w=majority'
+host = f'mongodb+srv://{username}:{password}@testcluster-9feub.azure.mongodb.net/{db}?retryWrites=true&w=majority'
 
 def global_setup():
     mongoengine.register_connection(
         alias=alias_core,
         db=db,
-        # username='SelectSounds',
-        # password='beatsbyer',
-        host='mongodb+srv://SelectSounds:beatsbyer@testcluster-9feub.azure.mongodb.net/selectsoundsdb?retryWrites=true&w=majority'
+        host=host
 
     )

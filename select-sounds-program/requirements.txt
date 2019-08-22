@@ -6,3 +6,4 @@ python-dateutil
 bs4
 dnspython
 python-docx
+configparser
