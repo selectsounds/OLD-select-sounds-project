@@ -1,7 +1,6 @@
 from colorama import Fore
 
 from infrastructure.switchlang import switch
-import infrastructure.state as state
 import services.data_service as dsvc
 import services.web_services as wsvc
 
