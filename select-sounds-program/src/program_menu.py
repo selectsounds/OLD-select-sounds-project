@@ -1,8 +1,10 @@
 from colorama import Fore
+from docx.opc.exceptions import PackageNotFoundError
 
 from infrastructure.switchlang import switch
 import services.data_service as dsvc
 import services.web_services as wsvc
+import services.label_service as lbsvc
 
 
 def run():
@@ -17,6 +19,7 @@ def run():
 
         with switch(action) as s:
             s.case('a', add_record)
+            s.case('g', generate_labels)
             s.case('l', list_records)
             s.case('f', find_record)
             s.case(['x', 'bye', 'exit', 'exit()'], exit_app)
@@ -34,6 +37,7 @@ def run():
 def show_commands():
     print('What action would you like to take:')
     print('[A]dd a record')
+    print('[G]enerate labels file')
     print('[L]ist existing records')
     print('[F]ind record')
     print('[U]pdate record')
@@ -119,6 +123,31 @@ def add_record():
     record = dsvc.add_record(record_data, cost=record_cost)
 
     success_msg(f'Record: "{record.name}" by {record.artist} added to database with id {record.id}')
+
+
+def generate_labels():
+    print(' ****************** GENERATE LABEL FILE ****************** ')
+
+    labels_doc = lbsvc.setup_doc_settings()
+    if type(labels_doc) == PackageNotFoundError:
+        error_msg("No valid labels template file found. Could not create labels file")
+        return
+
+    labels_doc_cells = lbsvc.get_label_cells(labels_doc)
+
+    records = lbsvc.read_records_csv_file()
+    formatted_records = lbsvc.format_record_data(records)
+
+    for i in range(len(formatted_records)):
+        labels_doc_cells[i].text = formatted_records[i]
+
+    lbsvc.save_labels(labels_doc)
+
+    if lbsvc.check_labels_file_exists():
+        success_msg('Label file successfully created at src/data/labels.docx')
+        return
+
+    error_msg('Error in creating label file')
 
 
 def list_records():
