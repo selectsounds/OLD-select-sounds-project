@@ -65,41 +65,6 @@ def save_labels(labels_doc: docx.Document, path=None) -> None:
     labels_doc.save(path)
 
 
-# def add_data_to_labels(labels_doc: docx.Document, record_data: List) -> None:
-
-# def main():
-#     print()
-#     print('****************  SELECTSOUNDS LABEL CREATOR  ****************')
-#     print()
-#
-#     print('Retrieving data from records.csv file')
-#     records = read_records_csv_file()
-#     if not records:
-#         program_menu.error_msg('No records.csv file found / no records found. Exiting script.')
-#         return
-#
-#     record_text = [
-#         "\n".join([
-#             f'Album: {r[0]}', f'Artist: {r[1]}', f'Label: {r[2]}', f'Country: {r[3]}',
-#             f'Release date: {r[4]}', f'Speed: {r[5]}',
-#             'Tracklist: {}'.format(r[6][2:-2].replace('"', '').replace(',', ', ')),
-#         ])
-#         for r in records
-#     ]
-#
-#     label_doc = setup_doc_settings()
-#
-#     label_cells = get_label_cells(label_doc)
-#
-#     for i in range(len(record_text)):
-#         label_cells[i].text = record_text[i]
-#
-#     label_doc.save(
-#         '/Users/Ivan/Documents/SelectSounds/select-sounds-project/select-sounds-program/src/data/labels.docx')
-#
-#     program_menu.success_msg('labels.docx document created successfully. Exiting...')
-#
-#
 if __name__ == '__main__':
     test_doc = docx.Document(config.ROOT_DIR + '/data/labels_template.docx')
 

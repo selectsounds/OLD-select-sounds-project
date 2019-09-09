@@ -50,19 +50,6 @@ $$$$$$$$$$$$$     $$$$$
     print(Fore.WHITE + '****************************************************************')
     print()
     print("Welcome to SelectSounds Record Database!")
-    # print("Why are you here?")
-    # print()
-
-
-# def find_user_intent():
-#     print("[g] Book a cage for your snake")
-#     print("[h] Offer extra cage space")
-#     print()
-#     choice = input("Are you a [g]uest or [h]ost? ")
-#     if choice == 'h':
-#         return 'offer'
-#
-#     return 'book'
 
 
 if __name__ == '__main__':

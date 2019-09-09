@@ -1,0 +1,11 @@
+# TO do list file, for actions that cover entire project (for use in PyCharm)
+
+# TODO: Convert RecordWebPages.py methods to services methods
+# TODO: Add PyTest functionality and test coverage
+
+
+# Future additions / advanced
+
+# TODO: (Advanced) Add GUI functionality
+# TODO: (Advanced) Create web service using program
+# TODO: (Advanced) Create same program with a SQL database (to practice ORACLE and SQL)

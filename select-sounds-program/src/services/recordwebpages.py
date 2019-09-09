@@ -570,9 +570,4 @@ if __name__ == '__main__':
         page_url='https://www.discogs.com/Blaze-Joe-Claussell-Southport-Weekender-Volume2/release/333759')
     page_soup = test_record_info_page.page_soup
 
-    # print(test_record_info_page.page_url)
-    # print(test_record_info_page.record_data)
-    #
-    # input('Hello: ')
-
     # TODO: Implement automated tests to make sure all data is working properly
