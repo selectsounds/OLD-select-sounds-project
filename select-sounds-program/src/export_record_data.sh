@@ -13,4 +13,4 @@ FILE_NAME=${5:-'records.csv'}
 
 # Command will fail without passing username + password as parameters when calling command
 
-mongoexport --host TestCluster-shard-0/testcluster-shard-00-00-9feub.azure.mongodb.net:27017,testcluster-shard-00-01-9feub.azure.mongodb.net:27017,testcluster-shard-00-02-9feub.azure.mongodb.net:27017 --ssl --username ${USERNAME} --password ${PASSWORD} --authenticationDatabase admin --db ${DB} --collection records --type=csv --fields ${FIELDS} --out ${CWD}/data/${FILE_NAME}
+mongoexport --host TestCluster-shard-0/testcluster-shard-00-00-9feub.azure.mongodb.net:27017,testcluster-shard-00-01-9feub.azure.mongodb.net:27017,testcluster-shard-00-02-9feub.azure.mongodb.net:27017 --ssl --username ${USERNAME} --password ${PASSWORD} --authenticationDatabase admin --db ${DB} --collection records --type=csv --fields ${FIELDS} --out ${CWD}/data/record_csv/${FILE_NAME}

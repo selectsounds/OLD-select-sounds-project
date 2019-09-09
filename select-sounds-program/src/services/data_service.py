@@ -63,7 +63,8 @@ def export_record_data(fields: List):
 
     if fields:
         command_fields = ','.join(fields)
-        file_name = '_'.join(fields) + '_records.csv'
+        file_name = '_'.join([f.replace('_', '-') for f in fields]) + '_records.csv'
+        print(file_name)
     else:
         command_fields = 'name,artist,label,country,release_date,speed,tracklist'
         file_name = 'records.csv'
@@ -71,12 +72,12 @@ def export_record_data(fields: List):
     command = ['sh', f'{path_to_export_command}', username, password, database, command_fields, file_name]
 
     export_record_data_command = subprocess.run(command, stderr=subprocess.PIPE)
-    return export_record_data_command.returncode, export_record_data_command.stderr
+    return file_name, export_record_data_command.returncode, export_record_data_command.stderr
 
 
-def get_records_data_file() -> str:
-    if os.path.exists(config.ROOT_DIR + '/data/records.csv'):
-        return 'src/data/records.csv'
+# def get_records_data_file() -> str:
+#     if os.path.exists(config.ROOT_DIR + '/data/records.csv'):
+#         return 'src/data/records.csv'
 
 
 def convert_letters_to_fields(field_keys: str):

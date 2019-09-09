@@ -36,7 +36,7 @@ def get_label_cells(document: docx.Document) -> List:
 
 def read_records_csv_file() -> List:
     records = []
-    with open(config.ROOT_DIR + '/data/records.csv') as record_csv_file:
+    with open(config.ROOT_DIR + '/data/record_csv/records.csv') as record_csv_file:
         csv_data = csv.reader(record_csv_file, delimiter=',')
         # print(csv_data)
 

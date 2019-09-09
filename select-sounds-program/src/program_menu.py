@@ -153,14 +153,15 @@ def export_records():
         else:
             fields = []
 
-    sh_error_code, sh_error_message = dsvc.export_record_data(fields)
+    record_data_file_path, sh_error_code, sh_error_message = dsvc.export_record_data(fields)
     if sh_error_code != 0:
         error_msg(
             f'Command export_record_data.sh failed with error code {sh_error_code} and error message "{sh_error_message}')
+        return
 
-    records_file_path = dsvc.get_records_data_file()
-    if records_file_path:
-        success_msg(f'Successfully generated records.csv file in {records_file_path}')
+    # records_file_path = dsvc.get_records_data_file()
+    if record_data_file_path:
+        success_msg(f'Successfully generated csv file data/record_csv/{record_data_file_path}')
 
     else:
         error_msg('No records.csv file found. An error has occurred. Returning to menu...')
