@@ -1,16 +1,16 @@
 import os
-
 import configparser
 
-mongo_alias: str = None
-mongo_db: str = None
-mongo_username: str = None
-mongo_password: str = None
+ROOT_DIR: str = os.path.abspath(os.path.dirname(__file__))
+
+mongo_alias: str
+mongo_db: str
+mongo_username: str
+mongo_password: str
 
 
 def setup_config():
-    cwd = os.path.abspath(os.path.dirname(__file__))
-    config_path = f'{"/".join(cwd.split("/")[:-2])}/config.ini'
+    config_path = f'{ROOT_DIR}/config.ini'
 
     if not os.path.exists(config_path):
         raise FileNotFoundError('No config.ini file found. Exiting...')

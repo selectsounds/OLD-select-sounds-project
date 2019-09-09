@@ -19,6 +19,7 @@ def run():
 
         with switch(action) as s:
             s.case('a', add_record)
+            s.case('e', export_records)
             s.case('g', generate_labels)
             s.case('l', list_records)
             s.case('f', find_record)
@@ -37,11 +38,12 @@ def run():
 def show_commands():
     print('What action would you like to take:')
     print('[A]dd a record')
+    print('[E]xport records')
     print('[G]enerate labels file')
-    print('[L]ist existing records')
-    print('[F]ind record')
-    print('[U]pdate record')
-    print('[D]elete record')
+    # print('[L]ist existing records')
+    # print('[F]ind record')
+    # print('[U]pdate record')
+    # print('[D]elete record')
     print('e[X]it app')
     print('[?] Help (this info)')
     print()
@@ -125,8 +127,29 @@ def add_record():
     success_msg(f'Record: "{record.name}" by {record.artist} added to database with id {record.id}')
 
 
+def export_records():
+    print(' ****************** EXPORT RECORD DATA FILE ****************** ')
+
+    sh_error_code, sh_error_message = dsvc.export_record_data()
+    if sh_error_code != 0:
+        error_msg(
+            f'Command export_record_data.sh failed with error code {sh_error_code} and error message "{sh_error_message}')
+
+    # TODO: Add optional arguments to allow user to edit what csv file will be created
+
+    records_file_path = dsvc.get_records_data_file()
+    if records_file_path:
+        success_msg(f'Successfully generated records.csv file in {records_file_path}')
+
+    else:
+        error_msg('No records.csv file found. An error has occurred. Returning to menu...')
+
+
 def generate_labels():
     print(' ****************** GENERATE LABEL FILE ****************** ')
+
+    # TODO: Dynamically generate labels.docx file (i.e. can be any size)
+    # TODO: Add option to export new records file before generating label file
 
     labels_doc = lbsvc.setup_doc_settings()
     if type(labels_doc) == PackageNotFoundError:

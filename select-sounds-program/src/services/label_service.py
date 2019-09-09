@@ -5,12 +5,14 @@ from typing import List
 import docx
 from docx.opc.exceptions import PackageNotFoundError
 
+from src import config
+
 DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 def setup_doc_settings() -> docx.Document:
     try:
-        labels_doc = docx.Document(DIR_PATH + '/../data/labels_template.docx')
+        labels_doc = docx.Document(config.ROOT_DIR + '/data/labels_template.docx')
     except PackageNotFoundError as err:
         return err
     style = labels_doc.styles['Normal']
@@ -34,7 +36,7 @@ def get_label_cells(document: docx.Document) -> List:
 
 def read_records_csv_file() -> List:
     records = []
-    with open(DIR_PATH + '/../data/records.csv') as record_csv_file:
+    with open(config.ROOT_DIR + '/data/records.csv') as record_csv_file:
         csv_data = csv.reader(record_csv_file, delimiter=',')
         # print(csv_data)
 
@@ -58,7 +60,7 @@ def format_record_data(record_data: List) -> List:
 
 def save_labels(labels_doc: docx.Document, path=None) -> None:
     if not path:
-        path = DIR_PATH + '/../data/labels.docx'
+        path = config.ROOT_DIR + '/data/labels.docx'
 
     labels_doc.save(path)
 
@@ -99,9 +101,9 @@ def save_labels(labels_doc: docx.Document, path=None) -> None:
 #
 #
 if __name__ == '__main__':
-    test_doc = docx.Document(DIR_PATH + '/../data/labels_template.docx')
+    test_doc = docx.Document(config.ROOT_DIR + '/data/labels_template.docx')
 
 
 def check_labels_file_exists():
-    file_exists = os.path.exists(DIR_PATH + '/../data/labels.docx')
+    file_exists = os.path.exists(config.ROOT_DIR + '/data/labels.docx')
     return file_exists

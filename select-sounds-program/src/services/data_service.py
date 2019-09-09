@@ -1,7 +1,12 @@
+import os
+import subprocess
 from typing import List, Dict
 
+from src import config
 from data.owners import Owner
 from data.records import Record
+
+DIR_PATH = os.path.abspath(os.path.dirname(__file__))
 
 
 def create_account(name: str, email: str) -> Owner:
@@ -47,3 +52,15 @@ def add_record(record_data: Dict, cost: float = None) -> Record:
 def check_existing_records(name: str, artist: str) -> List[Record]:
     query = Record.objects(name=name, artist=artist)
     return query
+
+
+def export_record_data():
+    path_to_export_command = config.ROOT_DIR + '/export_record_data.sh'
+
+    export_record_data_command = subprocess.run(['sh', f'{path_to_export_command}'], stderr=subprocess.PIPE)
+    return export_record_data_command.returncode, export_record_data_command.stderr
+
+
+def get_records_data_file() -> str:
+    if os.path.exists(config.ROOT_DIR + '/data/records.csv'):
+        return 'src/data/records.csv'
