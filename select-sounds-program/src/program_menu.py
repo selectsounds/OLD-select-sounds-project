@@ -126,12 +126,37 @@ def add_record():
 def export_records():
     print(' ****************** EXPORT RECORD DATA FILE ****************** ')
 
-    sh_error_code, sh_error_message = dsvc.export_record_data()
+    use_custom_fields = input(
+        'Use custom fields y/n (default: name,artist,label,country,release_date,speed,tracklist)? ')\
+        .lower().startswith('y')
+
+    fields = []
+    if use_custom_fields:
+        print('Enter which fields + order to extract from database (will also change name of generated records.csv file')
+        print('E.g. nag = name, artist, genre -> name_artist_genre_records.csv file created')
+        print('Leave blank to use existing default (any invalid characters will be ignored)')
+        print('[N]ame')
+        print('[A]rtist')
+        print('[L]abel')
+        print('[C]ountry')
+        print('[R]elease-date')
+        print('[G]enre')
+        print('[F]ormat')
+        print('[S]ize')
+        print('Sp[e]ed')
+        print('L[o]west-price')
+        print('[M]edian-price')
+        print('[H]ighest-price')
+        fields = input('-> ').lower()
+        if fields:
+            fields = dsvc.convert_letters_to_fields(fields)
+        else:
+            fields = []
+
+    sh_error_code, sh_error_message = dsvc.export_record_data(fields)
     if sh_error_code != 0:
         error_msg(
             f'Command export_record_data.sh failed with error code {sh_error_code} and error message "{sh_error_message}')
-
-    # TODO: Add optional arguments to allow user to edit what csv file will be created
 
     records_file_path = dsvc.get_records_data_file()
     if records_file_path:
